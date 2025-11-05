@@ -1,0 +1,56 @@
+{
+  "name": "angular-llm",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "ng": "ng",
+    "dev": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "serve:ssr:angular-llm": "node dist/angular-llm/server/server.mjs",
+    "lint": "oxlint --type-aware && ng lint"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/platform-server": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "@angular/ssr": "^20.3.8",
+    "express": "^5.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular-eslint/builder": "20.5.1",
+    "@angular/build": "^20.3.8",
+    "@angular/cli": "^20.3.8",
+    "@angular/compiler-cli": "^20.3.0",
+    "@eslint/js": "^9.38.0",
+    "@types/express": "^5.0.1",
+    "@types/node": "^24.10.0",
+    "angular-eslint": "20.5.1",
+    "eslint": "^9.38.0",
+    "eslint-plugin-oxlint": "^1.25.0",
+    "oxlint": "^1.25.0",
+    "oxlint-tsgolint": "^0.5.0",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.46.2"
+  }
+}
