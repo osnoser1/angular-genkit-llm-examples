@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.ts",
+    "check-types": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "oxlint --type-aware"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^24.10.0",
+    "oxlint": "^1.25.0",
+    "oxlint-tsgolint": "^0.5.0",
+    "typescript": "5.9.2"
+  }
+}

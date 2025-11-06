@@ -97,6 +97,28 @@ importers:
         specifier: 8.46.2
         version: 8.46.2(eslint@9.38.0)(typescript@5.9.2)
 
+  apps/backend:
+    dependencies:
+      express:
+        specifier: ^5.1.0
+        version: 5.1.0
+    devDependencies:
+      '@types/express':
+        specifier: ^5.0.1
+        version: 5.0.5
+      '@types/node':
+        specifier: ^24.10.0
+        version: 24.10.0
+      oxlint:
+        specifier: ^1.25.0
+        version: 1.25.0(oxlint-tsgolint@0.5.0)
+      oxlint-tsgolint:
+        specifier: ^0.5.0
+        version: 0.5.0
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
   apps/docs:
     dependencies:
       '@repo/ui':
