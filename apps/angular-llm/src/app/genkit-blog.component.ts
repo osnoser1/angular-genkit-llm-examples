@@ -19,7 +19,9 @@ interface BlogPost {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="mx-auto max-w-3xl px-5 py-8">
-      <h1 class="mb-8 text-center text-3xl font-bold text-gray-800">🚀 Genkit Blog Post Generator</h1>
+      <h1 class="mb-8 text-center text-3xl font-bold text-gray-800">
+        🚀 Genkit Blog Post Generator
+      </h1>
 
       <div class="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-6">
         <h2 class="mb-6 text-xl font-semibold text-gray-700">Blog Post Settings</h2>
@@ -36,7 +38,9 @@ interface BlogPost {
         </div>
 
         <div class="mb-6 flex flex-col">
-          <label for="audience" class="mb-2 text-sm font-semibold text-gray-700">Target Audience (optional):</label>
+          <label for="audience" class="mb-2 text-sm font-semibold text-gray-700"
+            >Target Audience (optional):</label
+          >
           <input
             id="audience"
             type="text"
@@ -74,14 +78,22 @@ interface BlogPost {
 
       <!-- Streaming Results Section -->
       @if (streamedData(); as posts) {
-        <div class="mb-6 rounded-lg border border-gray-200 border-l-4 border-l-indigo-500 bg-gray-50 p-6">
+        <div
+          class="mb-6 rounded-lg border border-gray-200 border-l-4 border-l-indigo-500 bg-gray-50 p-6"
+        >
           <h2 class="mb-4 text-xl font-semibold text-gray-700">🌊 Streaming Output</h2>
           @for (post of posts; track post) {
             <div class="mb-4 rounded-md border-l-4 border-l-indigo-500 bg-white p-3">
               <h3 class="mb-2 font-semibold text-gray-900">{{ post.title }}</h3>
-              <p class="text-sm text-gray-600"><strong>Reading Time:</strong> {{ post.readingTime }} min</p>
-              <p class="text-sm text-gray-600"><strong>Tags:</strong> {{ post.tags?.join(', ') }}</p>
-              <p class="text-sm text-gray-600"><strong>Main Points:</strong> {{ post.mainPoints?.join(', ') }}</p>
+              <p class="text-sm text-gray-600">
+                <strong>Reading Time:</strong> {{ post.readingTime }} min
+              </p>
+              <p class="text-sm text-gray-600">
+                <strong>Tags:</strong> {{ post.tags?.join(', ') }}
+              </p>
+              <p class="text-sm text-gray-600">
+                <strong>Main Points:</strong> {{ post.mainPoints?.join(', ') }}
+              </p>
               <p class="text-sm text-gray-600"><strong>Summary:</strong> {{ post.summary }}</p>
             </div>
           }
@@ -116,7 +128,9 @@ interface BlogPost {
               <p class="mb-3 block font-semibold text-gray-800">Tags:</p>
               <div class="flex flex-wrap gap-2">
                 @for (tag of post.tags; track tag) {
-                  <span class="rounded-full bg-linear-to-r from-indigo-500 to-purple-600 px-3 py-1 text-xs font-medium text-white">
+                  <span
+                    class="rounded-full bg-linear-to-r from-indigo-500 to-purple-600 px-3 py-1 text-xs font-medium text-white"
+                  >
                     {{ tag }}
                   </span>
                 }
@@ -141,12 +155,15 @@ export class GenkitBlogComponent {
   private readonly API_URL = 'http://localhost:3000/api';
 
   async generateNonStreaming() {
+    this.error.set('');
     this.isLoading.set(true);
     this.blogPost.set(undefined);
+    this.streamedData.set(undefined);
+
     try {
       const result = await firstValueFrom(
         this.httpClient.post<{ data: BlogPost; success: boolean }>(
-          `${this.API_URL}/structured-output`,
+          `${this.API_URL}/blog/structured-output`,
           { topic: this.topic(), audience: this.audience() },
         ),
       );
@@ -163,10 +180,11 @@ export class GenkitBlogComponent {
     this.error.set('');
     this.isLoading.set(true);
     this.streamedData.set(undefined);
+    this.blogPost.set(undefined);
 
     try {
       const result = streamFlow<BlogPost[], Partial<BlogPost>[]>({
-        url: `${this.API_URL}/analyze-blog-post`,
+        url: `${this.API_URL}/blog/analyze-blog-post`,
         input: { topic: this.topic(), audience: this.audience() },
       });
 
