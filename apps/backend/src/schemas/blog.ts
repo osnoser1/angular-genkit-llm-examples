@@ -15,9 +15,7 @@ export const SubtopicsSchema = z.array(SubtopicSchema);
 
 export const BlogPostSummarySchema = z.object({
   id: z.string().describe('Unique identifier for the blog post'),
-  title: z.string().describe('The blog post title'),
   summary: z.string().describe('Compelling 2-3 sentence summary'),
-  readingTime: z.number().describe('Estimated reading time in minutes'),
 });
 
 export const BlogPostSummariesSchema = z.array(BlogPostSummarySchema);
@@ -77,11 +75,11 @@ export const GenerateCompleteBlogPostRequestSchema = z.object({
     .string()
     .min(1, 'Summary is required')
     .max(1000, 'Summary must be less than 1000 characters'),
-  readingTime: z
-    .number()
-    .min(1, 'Reading time must be at least 1 minute')
-    .max(60, 'Reading time must not exceed 60 minutes')
-    .describe('Estimated reading time in minutes'),
+  audience: z
+    .string()
+    .max(500, 'Audience must be less than 500 characters')
+    .optional()
+    .describe('Target audience'),
 });
 
 export type GenerateSubtopicsRequest = z.infer<

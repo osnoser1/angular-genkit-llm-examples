@@ -61,9 +61,8 @@ export const generateBlogPostSummariesFlow = ai.defineFlow(
 Subtopic Description: "${description}"
 
 For each blog post, provide:
-- A compelling and SEO-friendly title
+- A unique ID (e.g., post-1, post-2, etc.)
 - A captivating 2-3 sentence summary that hooks the reader
-- An estimated reading time in minutes (realistic for the content described)
 
 Make sure the blog posts are diverse and cover different angles of the subtopic.
 Each post should be unique and provide distinct value to the reader.`;
@@ -93,24 +92,23 @@ export const generateCompleteBlogPostFlow = ai.defineFlow(
     inputSchema: GenerateCompleteBlogPostRequestSchema,
     outputSchema: BlogPostSchema,
   },
-  async ({ topic, subtopic, summary, readingTime }, { sendChunk }) => {
+  async ({ topic, subtopic, summary, audience }, { sendChunk }) => {
+    const audienceContext = audience ? ` for ${audience}` : '';
     const prompt = `Create a complete, well-structured blog post based on the following:
 Main Topic: "${topic}"
 Subtopic: "${subtopic}"
-Summary: "${summary}"
-Target Reading Time: ${readingTime} minutes
+Summary: "${summary}"${audience ? `\nTarget Audience: ${audience}` : ''}
 
 Structure the blog post with:
 - A compelling and SEO-optimized title
-- An engaging 2-3 sentence summary
-- 5-7 main points or sections with detailed explanations appropriate for ${readingTime}-minute read
-- Estimated reading time in minutes (approximately ${readingTime} minutes)
+- An engaging 2-3 sentence summary (same or improved version of the provided summary)
+- 5-7 main points or sections with detailed explanations
+- Estimated reading time in minutes (based on the content length, typically 5-15 minutes)
 - 5-8 relevant tags
-- Well-written content that is informative, engaging, and reader-friendly
+- Well-written, comprehensive content that is informative, engaging, and reader-friendly${audienceContext}
 
 Make the content original, valuable, and suitable for publishing on a professional blog.
-Ensure the writing style is clear, accessible, and maintains reader engagement throughout.
-The content should be appropriately scoped to be completable in approximately ${readingTime} minutes.`;
+Ensure the writing style is clear, accessible, and maintains reader engagement throughout.`;
 
     const { stream, response } = ai.generateStream({
       prompt,

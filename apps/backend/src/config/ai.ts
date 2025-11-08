@@ -8,7 +8,7 @@ import { googleAI } from '@genkit-ai/google-genai';
 export const initializeAI = () => {
   const ai = genkit({
     plugins: [googleAI()],
-    model: googleAI.model('gemini-2.5-flash'),
+    model: googleAI.model('gemini-2.5-flash-lite'),
   });
 
   return ai;
