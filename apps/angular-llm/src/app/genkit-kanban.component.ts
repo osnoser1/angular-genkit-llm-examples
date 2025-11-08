@@ -9,12 +9,20 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { streamFlow } from 'genkit/beta/client';
 
+interface CardError {
+  type: 'summary' | 'post' | 'network' | 'validation' | 'timeout';
+  message: string;
+  timestamp: Date;
+  retryCount: number;
+}
+
 interface KanbanCard {
   id: string;
-  title: string;
-  summary: string;
-  readingTime: number;
-  tags: string[];
+  title?: string;
+  summary?: string;
+  readingTime?: number;
+  tags?: string[];
+  error?: CardError;
 }
 
 interface KanbanColumn {
@@ -141,7 +149,11 @@ interface BlogPost {
 
         @if (columns().length > 0) {
           <div class="flex gap-6 overflow-x-auto p-6">
-            @for (column of columns(); track column.subtopic) {
+            @for (
+              column of columns();
+              track column.subtopic;
+              let colIdx = $index
+            ) {
               <div
                 class="flex w-96 shrink-0 flex-col rounded-lg bg-gray-200 p-4"
               >
@@ -169,8 +181,91 @@ interface BlogPost {
                   <div class="flex flex-col gap-3">
                     @for (card of column.cards; track card.id) {
                       <div
-                        class="cursor-pointer rounded-md bg-white p-4 shadow-sm transition-all hover:shadow-md hover:ring-2 hover:ring-indigo-300"
+                        [class]="
+                          'rounded-md p-4 shadow-sm transition-all ' +
+                          (card.error
+                            ? 'border-2 border-red-300 bg-red-50'
+                            : 'cursor-pointer bg-white hover:shadow-md hover:ring-2 hover:ring-indigo-300')
+                        "
                       >
+                        <!-- Error Banner -->
+                        @if (card.error) {
+                          <div
+                            class="mb-3 rounded-md p-2"
+                            [ngClass]="{
+                              'bg-red-100 border-l-4 border-red-500':
+                                card.error.type === 'post' ||
+                                card.error.type === 'validation',
+                              'bg-yellow-100 border-l-4 border-yellow-500':
+                                card.error.type === 'network' ||
+                                card.error.type === 'timeout',
+                              'bg-orange-100 border-l-4 border-orange-500':
+                                card.error.type === 'summary',
+                            }"
+                          >
+                            <p
+                              class="mb-2 text-xs font-semibold"
+                              [ngClass]="{
+                                'text-red-700':
+                                  card.error.type === 'post' ||
+                                  card.error.type === 'validation',
+                                'text-yellow-700':
+                                  card.error.type === 'network' ||
+                                  card.error.type === 'timeout',
+                                'text-orange-700':
+                                  card.error.type === 'summary',
+                              }"
+                            >
+                              @switch (card.error.type) {
+                                @case ('network') {
+                                  🌐 Connection Error
+                                }
+                                @case ('timeout') {
+                                  ⏱️ Timeout
+                                }
+                                @case ('post') {
+                                  💭 Generation Failed
+                                }
+                                @case ('validation') {
+                                  ⚠️ Invalid Response
+                                }
+                                @case ('summary') {
+                                  📋 Summary Failed
+                                }
+                              }
+                            </p>
+                            <p
+                              class="text-xs"
+                              [ngClass]="{
+                                'text-red-600':
+                                  card.error.type === 'post' ||
+                                  card.error.type === 'validation',
+                                'text-yellow-600':
+                                  card.error.type === 'network' ||
+                                  card.error.type === 'timeout',
+                                'text-orange-600':
+                                  card.error.type === 'summary',
+                              }"
+                            >
+                              {{ card.error.message }}
+                            </p>
+                            <div class="mt-2 flex gap-2">
+                              <button
+                                (click)="retryCard(colIdx, card.id!)"
+                                class="text-xs font-medium text-blue-600 hover:underline"
+                              >
+                                🔄 Retry ({{ card.error.retryCount }})
+                              </button>
+                              <button
+                                (click)="dismissCardError(colIdx, card.id!)"
+                                class="text-xs font-medium text-gray-600 hover:underline"
+                              >
+                                ✕ Dismiss
+                              </button>
+                            </div>
+                          </div>
+                        }
+
                         <!-- Title: Shows content or skeleton -->
                         @if (card.title) {
                           <h3
@@ -178,7 +273,7 @@ interface BlogPost {
                           >
                             {{ card.title }}
                           </h3>
-                        } @else {
+                        } @else if (!card.error) {
                           <div
                             class="mb-2 h-6 w-full animate-pulse rounded bg-gray-200"
                           ></div>
@@ -189,7 +284,7 @@ interface BlogPost {
                           <p class="mb-3 line-clamp-3 text-xs text-gray-600">
                             {{ card.summary }}
                           </p>
-                        } @else {
+                        } @else if (!card.error) {
                           <div class="mb-3 flex flex-col gap-1">
                             <div
                               class="h-3 w-full animate-pulse rounded bg-gray-200"
@@ -201,41 +296,43 @@ interface BlogPost {
                         }
 
                         <!-- Reading time and tags -->
-                        <div class="flex items-center justify-between">
-                          @if (card.readingTime) {
-                            <span class="text-xs font-medium text-gray-700">
-                              ⏱️ {{ card.readingTime }} min
-                            </span>
-                          } @else {
-                            <div
-                              class="h-4 w-16 animate-pulse rounded bg-gray-200"
-                            ></div>
-                          }
+                        @if (!card.error) {
+                          <div class="flex items-center justify-between">
+                            @if (card.readingTime) {
+                              <span class="text-xs font-medium text-gray-700">
+                                ⏱️ {{ card.readingTime }} min
+                              </span>
+                            } @else {
+                              <div
+                                class="h-4 w-16 animate-pulse rounded bg-gray-200"
+                              ></div>
+                            }
 
-                          <!-- Tags: Shows content or skeleton -->
-                          @if (card.tags && card.tags.length > 0) {
-                            <div
-                              class="flex flex-wrap gap-1 justify-end max-w-3/4"
-                            >
-                              @for (tag of card.tags.slice(0, 2); track tag) {
-                                <span
-                                  class="inline-block rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700"
-                                >
-                                  {{ tag }}
-                                </span>
-                              }
-                            </div>
-                          } @else {
-                            <div class="flex gap-1">
+                            <!-- Tags: Shows content or skeleton -->
+                            @if (card.tags && card.tags.length > 0) {
                               <div
-                                class="h-5 w-12 animate-pulse rounded-full bg-gray-200"
-                              ></div>
-                              <div
-                                class="h-5 w-12 animate-pulse rounded-full bg-gray-200"
-                              ></div>
-                            </div>
-                          }
-                        </div>
+                                class="flex flex-wrap gap-1 justify-end max-w-3/4"
+                              >
+                                @for (tag of card.tags.slice(0, 2); track tag) {
+                                  <span
+                                    class="inline-block rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700"
+                                  >
+                                    {{ tag }}
+                                  </span>
+                                }
+                              </div>
+                            } @else {
+                              <div class="flex gap-1">
+                                <div
+                                  class="h-5 w-12 animate-pulse rounded-full bg-gray-200"
+                                ></div>
+                                <div
+                                  class="h-5 w-12 animate-pulse rounded-full bg-gray-200"
+                                ></div>
+                              </div>
+                            }
+                          </div>
+                        }
                       </div>
                     }
                   </div>
@@ -323,42 +420,46 @@ export class GenkitKanbanComponent {
     columnIndex: number,
     subtopic: { id: string; title: string; description: string },
   ): Promise<void> {
-    // Step 1: Fetch summaries
-    const summariesResult = streamFlow<
-      { id: string; summary: string }[],
-      { id: string; summary: string }[]
-    >({
-      url: `${this.API_URL}/blog/post-summaries`,
-      input: {
-        topic: this.topic(),
-        subtopic: subtopic.title,
-        description: subtopic.description,
-      },
-    });
+    try {
+      // Step 1: Fetch summaries
+      const summariesResult = streamFlow<
+        { id: string; summary: string }[],
+        { id: string; summary: string }[]
+      >({
+        url: `${this.API_URL}/blog/post-summaries`,
+        input: {
+          topic: this.topic(),
+          subtopic: subtopic.title,
+          description: subtopic.description,
+        },
+      });
 
-    let summaries: { id: string; summary: string }[] = [];
+      let summaries: { id: string; summary: string }[] = [];
 
-    // Stream summaries and show them in real-time
-    for await (const chunk of summariesResult.stream) {
-      summaries = chunk;
-      // Create placeholder cards with summaries as they arrive
-      this.createSummaryCardsInColumn(columnIndex, chunk);
+      // Stream summaries and show them in real-time
+      for await (const chunk of summariesResult.stream) {
+        summaries = chunk;
+        // Create placeholder cards with summaries as they arrive
+        this.createSummaryCardsInColumn(columnIndex, chunk);
+      }
+
+      const finalSummaries = await summariesResult.output;
+      if (finalSummaries) {
+        summaries = finalSummaries;
+        this.createSummaryCardsInColumn(columnIndex, finalSummaries);
+      }
+
+      console.log('summaries', this.columns());
+
+      // Step 2: Fetch complete post for each summary in parallel
+      const postPromises = summaries.map((summary) =>
+        this.fetchCompleteBlogPost(columnIndex, subtopic, summary),
+      );
+
+      await Promise.all(postPromises);
+    } catch (err) {
+      console.error('Error fetching summaries:', err);
     }
-
-    const finalSummaries = await summariesResult.output;
-    if (finalSummaries) {
-      summaries = finalSummaries;
-      this.createSummaryCardsInColumn(columnIndex, finalSummaries);
-    }
-
-    console.log('summaries', this.columns());
-
-    // Step 2: Fetch complete post for each summary in parallel
-    const postPromises = summaries.map((summary) =>
-      this.fetchCompleteBlogPost(columnIndex, subtopic, summary),
-    );
-
-    await Promise.all(postPromises);
   }
 
   private createSummaryCardsInColumn(
@@ -385,25 +486,29 @@ export class GenkitKanbanComponent {
     subtopic: { id: string; title: string; description: string },
     summary: { id: string; summary: string },
   ): Promise<void> {
-    const postResult = streamFlow<BlogPost, Partial<BlogPost>>({
-      url: `${this.API_URL}/blog/post`,
-      input: {
-        topic: this.topic(),
-        subtopic: subtopic.title,
-        summary: summary.summary,
-        audience: this.audience(),
-      },
-    });
+    try {
+      const postResult = streamFlow<BlogPost, Partial<BlogPost>>({
+        url: `${this.API_URL}/blog/post`,
+        input: {
+          topic: this.topic(),
+          subtopic: subtopic.title,
+          summary: summary.summary,
+          audience: this.audience(),
+        },
+      });
 
-    let blogPost = null;
-    for await (const chunk of postResult.stream) {
-      blogPost = chunk;
-      this.addPostToColumn(columnIndex, summary.id, blogPost);
-    }
+      let blogPost = null;
+      for await (const chunk of postResult.stream) {
+        blogPost = chunk;
+        this.addPostToColumn(columnIndex, summary.id, blogPost);
+      }
 
-    const finalPost = await postResult.output;
-    if (finalPost) {
-      this.addPostToColumn(columnIndex, summary.id, finalPost);
+      const finalPost = await postResult.output;
+      if (finalPost) {
+        this.addPostToColumn(columnIndex, summary.id, finalPost);
+      }
+    } catch (err) {
+      this.handleCardError(columnIndex, summary.id, err, 'post');
     }
   }
 
@@ -436,5 +541,154 @@ export class GenkitKanbanComponent {
 
       return newCols;
     });
+  }
+
+  private classifyError(err: unknown): CardError['type'] {
+    const errorMsg = err instanceof Error ? err.message.toLowerCase() : '';
+
+    if (errorMsg.includes('timeout') || errorMsg.includes('timed out')) {
+      return 'timeout';
+    }
+    if (
+      errorMsg.includes('network') ||
+      errorMsg.includes('connection') ||
+      errorMsg.includes('fetch')
+    ) {
+      return 'network';
+    }
+    if (errorMsg.includes('validation') || errorMsg.includes('schema')) {
+      return 'validation';
+    }
+
+    return 'post';
+  }
+
+  private getErrorMessage(err: unknown, type: CardError['type']): string {
+    if (err instanceof Error) {
+      return err.message;
+    }
+
+    const messages: Record<CardError['type'], string> = {
+      network: 'Network connection failed. Check your internet connection.',
+      timeout: 'Request timed out. Please try again.',
+      post: 'Failed to generate blog post. Please retry.',
+      validation: 'Server returned invalid data. Please retry.',
+      summary: 'Failed to fetch summary. Please retry.',
+    };
+
+    return messages[type] || 'An error occurred. Please retry.';
+  }
+
+  private handleCardError(
+    columnIndex: number,
+    cardId: string,
+    err: unknown,
+    phase: 'summary' | 'post',
+  ): void {
+    const errorType = this.classifyError(err);
+    const message = this.getErrorMessage(err, errorType);
+
+    console.error(`[${cardId}] ${phase} phase failed:`, err);
+
+    this.setCardError(columnIndex, cardId, errorType, message);
+  }
+
+  private setCardError(
+    columnIndex: number,
+    cardId: string,
+    type: CardError['type'],
+    message: string,
+  ): void {
+    this.columns.update((cols) => {
+      const newCols = [...cols];
+      const cardIndex = newCols[columnIndex].cards.findIndex(
+        (c) => c.id === cardId,
+      );
+
+      if (cardIndex >= 0) {
+        const currentCard = newCols[columnIndex].cards[cardIndex];
+        const currentError = currentCard.error;
+        const retryCount = currentError ? currentError.retryCount : 0;
+
+        newCols[columnIndex].cards[cardIndex] = {
+          ...currentCard,
+          error: {
+            type,
+            message,
+            timestamp: new Date(),
+            retryCount,
+          },
+        };
+      }
+
+      return newCols;
+    });
+  }
+
+  private clearCardError(columnIndex: number, cardId: string): void {
+    this.columns.update((cols) => {
+      const newCols = [...cols];
+      const cardIndex = newCols[columnIndex].cards.findIndex(
+        (c) => c.id === cardId,
+      );
+
+      if (cardIndex >= 0) {
+        const currentCard = newCols[columnIndex].cards[cardIndex];
+        const newCard: Partial<KanbanCard> = {
+          ...currentCard,
+          error: undefined,
+        };
+        newCols[columnIndex].cards[cardIndex] = newCard;
+      }
+
+      return newCols;
+    });
+  }
+
+  dismissCardError(columnIndex: number, cardId: string): void {
+    this.clearCardError(columnIndex, cardId);
+  }
+
+  async retryCard(columnIndex: number, cardId: string): Promise<void> {
+    // Find the card and summary
+    const card = this.columns()[columnIndex].cards.find((c) => c.id === cardId);
+    if (!card) {
+      return;
+    }
+
+    // Increment retry count
+    this.columns.update((cols) => {
+      const newCols = [...cols];
+      const cardIndex = newCols[columnIndex].cards.findIndex(
+        (c) => c.id === cardId,
+      );
+
+      if (cardIndex >= 0 && newCols[columnIndex].cards[cardIndex].error) {
+        const error = newCols[columnIndex].cards[cardIndex].error!;
+        error.retryCount += 1;
+        newCols[columnIndex].cards[cardIndex].error = { ...error };
+      }
+
+      return newCols;
+    });
+
+    // Find column and topic info
+    const columnData = this.columns()[columnIndex];
+    const subtopic = columnData.subtopic;
+    const description = columnData.description;
+
+    // Retry fetching complete post
+    await this.fetchCompleteBlogPost(
+      columnIndex,
+      {
+        id: 'retry',
+        title: subtopic,
+        description,
+      },
+      {
+        id: cardId,
+        summary: card.summary || '',
+      },
+    );
   }
 }
