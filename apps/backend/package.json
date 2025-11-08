@@ -9,6 +9,17 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "oxlint --type-aware"
   },
+  "prettier": {
+    "singleQuote": true
+  },
+  "lint-staged": {
+    "!(*.{js,ts,html})": "prettier --write",
+    "*.{js,ts,html}": [
+      "oxlint --type-aware --fix",
+      "ng lint",
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@genkit-ai/express": "^1.22.0",
     "@genkit-ai/google-genai": "^1.22.0",
@@ -21,8 +32,8 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.1",
     "@types/node": "^24.10.0",
-    "oxlint": "^1.25.0",
-    "oxlint-tsgolint": "^0.5.0",
+    "oxlint": "^1.26.0",
+    "oxlint-tsgolint": "^0.5.1",
     "typescript": "5.9.2"
   }
 }

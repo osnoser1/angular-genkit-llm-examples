@@ -12,7 +12,6 @@
     "lint": "oxlint --type-aware && ng lint"
   },
   "prettier": {
-    "printWidth": 100,
     "singleQuote": true,
     "overrides": [
       {
@@ -21,6 +20,14 @@
           "parser": "angular"
         }
       }
+    ]
+  },
+  "lint-staged": {
+    "!(*.{js,ts,html})": "prettier --write",
+    "*.{js,ts,html}": [
+      "oxlint --type-aware --fix",
+      "ng lint",
+      "prettier --write"
     ]
   },
   "private": true,
@@ -47,13 +54,14 @@
     "@angular/cli": "^20.3.8",
     "@angular/compiler-cli": "^20.3.0",
     "@eslint/js": "^9.38.0",
+    "@repo/eslint-config": "workspace:*",
     "@types/express": "^5.0.1",
     "@types/node": "^24.10.0",
     "angular-eslint": "20.5.1",
     "eslint": "^9.38.0",
-    "eslint-plugin-oxlint": "^1.25.0",
-    "oxlint": "^1.25.0",
-    "oxlint-tsgolint": "^0.5.0",
+    "eslint-plugin-oxlint": "^1.26.0",
+    "oxlint": "^1.26.0",
+    "oxlint-tsgolint": "^0.5.1",
     "typescript": "5.9.2",
     "typescript-eslint": "8.46.2"
   }

@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: Lint and format code
+      glob: "*.{js,ts,html}"
+      run: |
+        pnpm oxlint --type-aware --fix {staged_files}
+        pnpm prettier --write {staged_files}
+
+    - name: Format rest of files
+      glob: "*"
+      exclude:
+        - "*.{js,ts,html}"
+      run: pnpm prettier --write {staged_files}

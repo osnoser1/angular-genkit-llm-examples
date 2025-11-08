@@ -8,7 +8,6 @@ import {
   GenerateBlogPostSummariesRequestSchema,
   GenerateCompleteBlogPostRequestSchema,
   AnalyzeBlogPostFlowRequestSchema,
-  StructuredOutputRequestSchema,
 } from "../schemas/blog.ts";
 
 /**
@@ -164,7 +163,10 @@ export const analyzeBlogPostFlow = ai.defineFlow(
  * Non-streaming handler for structured output (legacy endpoint)
  * Uses direct ai.generate instead of ai.defineFlow for backward compatibility
  */
-export async function generateStructuredOutput(input: { topic: string; audience?: string }): Promise<any> {
+export async function generateStructuredOutput(input: {
+  topic: string;
+  audience?: string;
+}): Promise<any> {
   const { topic, audience } = input;
   const prompt = `Create a detailed blog post outline about "${topic}"${
     audience ? ` for ${audience}` : ""
