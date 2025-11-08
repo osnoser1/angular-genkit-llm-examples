@@ -1,10 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { streamFlow } from 'genkit/beta/client';
@@ -132,7 +126,7 @@ interface BlogPost {
           </div>
         }
 
-        @if (isGenerating()) {
+        @if (columns().length === 0 && isGenerating()) {
           <div
             class="flex h-full items-center justify-center text-center text-gray-600"
           >
@@ -352,11 +346,24 @@ export class GenkitKanbanComponent {
   isGenerating = signal(false);
   error = signal('');
 
-  private httpClient = inject(HttpClient);
   private readonly API_URL = 'http://localhost:3000/api';
 
   getTotalCards(): number {
     return this.columns().reduce((total, col) => total + col.cards.length, 0);
+  }
+
+  private updateColumnsFromSubtopics(
+    subtopics: Array<
+      Partial<{ id: string; title: string; description: string }>
+    >,
+  ): void {
+    const columns: KanbanColumn[] = subtopics.map((sub) => ({
+      subtopic: sub.title ?? '',
+      description: sub.description ?? '',
+      cards: [],
+      isLoading: true,
+    }));
+    this.columns.set(columns);
   }
 
   async generateKanban() {
@@ -370,35 +377,29 @@ export class GenkitKanbanComponent {
     this.columns.set([]);
 
     try {
-      // Step 1: Get subtopics
+      // Step 1: Get subtopics (streaming)
       const subtopicsResult = streamFlow<
         { id: string; title: string; description: string }[],
-        { id: string; title: string; description: string }[]
+        Partial<{ id: string; title: string; description: string }>[]
       >({
         url: `${this.API_URL}/blog/subtopics`,
         input: { topic: this.topic() },
       });
 
       let subtopics: { id: string; title: string; description: string }[] = [];
+
+      // Stream subtopics and show them progressively
       for await (const chunk of subtopicsResult.stream) {
-        subtopics = chunk;
+        // Update UI with progressive columns as they arrive
+        this.updateColumnsFromSubtopics(chunk);
       }
 
+      // Get final result and update UI
       const finalSubtopics = await subtopicsResult.output;
       if (finalSubtopics) {
         subtopics = finalSubtopics;
+        this.updateColumnsFromSubtopics(subtopics);
       }
-
-      // Initialize columns with empty cards
-      const initialColumns: KanbanColumn[] = subtopics.map((sub) => ({
-        subtopic: sub.title,
-        description: sub.description,
-        cards: [],
-        isLoading: true,
-      }));
-
-      this.columns.set(initialColumns);
-      this.isGenerating.set(false);
 
       // Step 2: Fetch summaries for all subtopics in parallel
       const summaryPromises = subtopics.map((subtopic, i) =>
