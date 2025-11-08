@@ -17,11 +17,15 @@ const server = app.listen(config.port, () => {
   console.log('');
   console.log(`  - POST /api/blog/post-summaries (streaming)`);
   console.log(`    Generates blog post summaries for a topic and subtopic`);
-  console.log(`    Request body: { topic: string, subtopic: string, description: string }`);
+  console.log(
+    `    Request body: { topic: string, subtopic: string, description: string }`,
+  );
   console.log('');
   console.log(`  - POST /api/blog/post (streaming)`);
   console.log(`    Generates a complete blog post with all details`);
-  console.log(`    Request body: { topic: string, subtopic: string, summary: string, readingTime: number }`);
+  console.log(
+    `    Request body: { topic: string, subtopic: string, summary: string, readingTime: number }`,
+  );
   console.log('');
   console.log(`  - POST /api/blog/analyze-blog-post (legacy, streaming)`);
   console.log(`    Analyzes and generates blog posts for a topic`);

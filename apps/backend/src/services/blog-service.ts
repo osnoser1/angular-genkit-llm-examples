@@ -1,4 +1,4 @@
-import { ai } from "../config/ai.ts";
+import { ai } from '../config/ai.ts';
 import {
   SubtopicsSchema,
   BlogPostSummariesSchema,
@@ -8,7 +8,7 @@ import {
   GenerateBlogPostSummariesRequestSchema,
   GenerateCompleteBlogPostRequestSchema,
   AnalyzeBlogPostFlowRequestSchema,
-} from "../schemas/blog.ts";
+} from '../schemas/blog.ts';
 
 /**
  * Blog Service - Handles all blog generation operations
@@ -21,7 +21,7 @@ import {
  */
 export const generateSubtopicsFlow = ai.defineFlow(
   {
-    name: "generateSubtopics",
+    name: 'generateSubtopics',
     inputSchema: GenerateSubtopicsRequestSchema,
     outputSchema: SubtopicsSchema,
   },
@@ -43,7 +43,7 @@ Ensure the subtopics are diverse, cover different aspects of the topic, and woul
 
     const finalResponse = await response;
     return finalResponse.output!;
-  }
+  },
 );
 
 /**
@@ -51,7 +51,7 @@ Ensure the subtopics are diverse, cover different aspects of the topic, and woul
  */
 export const generateBlogPostSummariesFlow = ai.defineFlow(
   {
-    name: "generateBlogPostSummaries",
+    name: 'generateBlogPostSummaries',
     inputSchema: GenerateBlogPostSummariesRequestSchema,
     outputSchema: BlogPostSummariesSchema,
   },
@@ -81,7 +81,7 @@ Each post should be unique and provide distinct value to the reader.`;
 
     const finalResponse = await response;
     return finalResponse.output!;
-  }
+  },
 );
 
 /**
@@ -89,7 +89,7 @@ Each post should be unique and provide distinct value to the reader.`;
  */
 export const generateCompleteBlogPostFlow = ai.defineFlow(
   {
-    name: "generateCompleteBlogPost",
+    name: 'generateCompleteBlogPost',
     inputSchema: GenerateCompleteBlogPostRequestSchema,
     outputSchema: BlogPostSchema,
   },
@@ -125,7 +125,7 @@ The content should be appropriately scoped to be completable in approximately ${
 
     const finalResponse = await response;
     return finalResponse.output!;
-  }
+  },
 );
 
 /**
@@ -134,13 +134,13 @@ The content should be appropriately scoped to be completable in approximately ${
  */
 export const analyzeBlogPostFlow = ai.defineFlow(
   {
-    name: "analyzeBlogPost",
+    name: 'analyzeBlogPost',
     inputSchema: AnalyzeBlogPostFlowRequestSchema,
     outputSchema: BlogPostsSchema,
   },
   async ({ topic, audience }, { sendChunk }) => {
     const prompt = `Create six detailed blog post outlines about "${topic}"${
-      audience ? ` for ${audience}` : ""
+      audience ? ` for ${audience}` : ''
     }. Structure each with a compelling title, summary, main points, reading time estimate, and tags.`;
 
     const { stream, response } = ai.generateStream({
@@ -156,7 +156,7 @@ export const analyzeBlogPostFlow = ai.defineFlow(
 
     const finalResponse = await response;
     return finalResponse.output!;
-  }
+  },
 );
 
 /**
@@ -169,7 +169,7 @@ export async function generateStructuredOutput(input: {
 }): Promise<any> {
   const { topic, audience } = input;
   const prompt = `Create a detailed blog post outline about "${topic}"${
-    audience ? ` for ${audience}` : ""
+    audience ? ` for ${audience}` : ''
   }. Structure it with a compelling title, summary, main points, reading time estimate, and tags.`;
 
   const response = await ai.generate({

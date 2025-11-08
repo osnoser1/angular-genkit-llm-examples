@@ -22,14 +22,6 @@
       }
     ]
   },
-  "lint-staged": {
-    "!(*.{js,ts,html})": "prettier --write",
-    "*.{js,ts,html}": [
-      "oxlint --type-aware --fix",
-      "ng lint",
-      "prettier --write"
-    ]
-  },
   "private": true,
   "dependencies": {
     "@angular/common": "^20.3.0",

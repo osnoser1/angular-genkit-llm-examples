@@ -19,7 +19,7 @@ export const errorHandler = (
   err: Error | APIError,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ): void => {
   console.error('Error:', err);
 
@@ -47,4 +47,3 @@ export const errorHandler = (
 export const setupErrorHandling = (app: Express): void => {
   app.use(errorHandler);
 };
-

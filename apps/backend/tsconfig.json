@@ -1,14 +1,14 @@
 {
-    "compilerOptions": {
-       "noEmit": true,
-       "target": "esnext",
-       "module": "nodenext",
-       "strict": true,
-       "rewriteRelativeImportExtensions": true,
-       "types": ["node"],
-       "erasableSyntaxOnly": true,
-       "allowImportingTsExtensions": true,
-       "verbatimModuleSyntax": true,
-       "skipLibCheck": true
-    }
-  } 
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "esnext",
+    "module": "nodenext",
+    "strict": true,
+    "rewriteRelativeImportExtensions": true,
+    "types": ["node"],
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
+  }
+}

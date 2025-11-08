@@ -12,14 +12,6 @@
   "prettier": {
     "singleQuote": true
   },
-  "lint-staged": {
-    "!(*.{js,ts,html})": "prettier --write",
-    "*.{js,ts,html}": [
-      "oxlint --type-aware --fix",
-      "ng lint",
-      "prettier --write"
-    ]
-  },
   "dependencies": {
     "@genkit-ai/express": "^1.22.0",
     "@genkit-ai/google-genai": "^1.22.0",

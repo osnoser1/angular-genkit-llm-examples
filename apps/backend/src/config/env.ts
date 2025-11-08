@@ -18,4 +18,3 @@ export const config = {
   nodeEnv: getEnvVariable('NODE_ENV', 'development'),
   apiKey: getEnvVariable('GEMINI_API_KEY', ''),
 };
-

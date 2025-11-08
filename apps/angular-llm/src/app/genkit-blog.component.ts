@@ -1,5 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { streamFlow } from 'genkit/beta/client';
 import { firstValueFrom } from 'rxjs';
@@ -24,9 +29,13 @@ interface BlogPost {
       </h1>
 
       <div class="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-6">
-        <h2 class="mb-6 text-xl font-semibold text-gray-700">Blog Post Settings</h2>
+        <h2 class="mb-6 text-xl font-semibold text-gray-700">
+          Blog Post Settings
+        </h2>
         <div class="mb-4 flex flex-col">
-          <label for="topic" class="mb-2 text-sm font-semibold text-gray-700">Topic:</label>
+          <label for="topic" class="mb-2 text-sm font-semibold text-gray-700"
+            >Topic:</label
+          >
           <input
             id="topic"
             type="text"
@@ -70,7 +79,9 @@ interface BlogPost {
         </div>
 
         @if (error()) {
-          <div class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <div
+            class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          >
             ❌ Error: {{ error() }}
           </div>
         }
@@ -81,9 +92,13 @@ interface BlogPost {
         <div
           class="mb-6 rounded-lg border border-gray-200 border-l-4 border-l-indigo-500 bg-gray-50 p-6"
         >
-          <h2 class="mb-4 text-xl font-semibold text-gray-700">🌊 Streaming Output</h2>
+          <h2 class="mb-4 text-xl font-semibold text-gray-700">
+            🌊 Streaming Output
+          </h2>
           @for (post of posts; track post) {
-            <div class="mb-4 rounded-md border-l-4 border-l-indigo-500 bg-white p-3">
+            <div
+              class="mb-4 rounded-md border-l-4 border-l-indigo-500 bg-white p-3"
+            >
               <h3 class="mb-2 font-semibold text-gray-900">{{ post.title }}</h3>
               <p class="text-sm text-gray-600">
                 <strong>Reading Time:</strong> {{ post.readingTime }} min
@@ -94,7 +109,9 @@ interface BlogPost {
               <p class="text-sm text-gray-600">
                 <strong>Main Points:</strong> {{ post.mainPoints?.join(', ') }}
               </p>
-              <p class="text-sm text-gray-600"><strong>Summary:</strong> {{ post.summary }}</p>
+              <p class="text-sm text-gray-600">
+                <strong>Summary:</strong> {{ post.summary }}
+              </p>
             </div>
           }
         </div>
@@ -103,12 +120,18 @@ interface BlogPost {
       <!-- Non-Streaming Results Section -->
       @if (blogPost(); as post) {
         <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-6">
-          <h2 class="mb-4 text-xl font-semibold text-gray-700">📝 Generated Blog Post</h2>
+          <h2 class="mb-4 text-xl font-semibold text-gray-700">
+            📝 Generated Blog Post
+          </h2>
           <div class="rounded-lg bg-white p-6 shadow-sm">
-            <h3 class="mb-4 text-2xl font-bold text-gray-900">{{ post.title }}</h3>
+            <h3 class="mb-4 text-2xl font-bold text-gray-900">
+              {{ post.title }}
+            </h3>
             <p class="mb-4 leading-relaxed text-gray-600">{{ post.summary }}</p>
 
-            <div class="mb-5 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-600">
+            <div
+              class="mb-5 rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-600"
+            >
               <span>⏱️ {{ post.readingTime }} min read</span>
             </div>
 
@@ -205,7 +228,8 @@ export class GenkitBlogComponent {
   }
 
   private handleError(err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error occurred';
+    const message =
+      err instanceof Error ? err.message : 'Unknown error occurred';
     this.error.set(message);
     console.error('Error:', err);
   }
