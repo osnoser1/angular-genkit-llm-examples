@@ -1,6 +1,4 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "env": {
-    "builtin": true
-  }
+  "extends": ["./node_modules/@repo/oxlint-config/oxlint-base.json"]
 }

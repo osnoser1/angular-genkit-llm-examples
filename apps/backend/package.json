@@ -7,7 +7,8 @@
     "dev": "node --env-file-if-exists=.env --env-file-if-exists=.env.local --watch src/index.ts",
     "check-types": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "oxlint --type-aware"
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix --fix-suggestions"
   },
   "prettier": {
     "singleQuote": true
@@ -21,11 +22,10 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@repo/oxlint-config": "workspace:*",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.1",
     "@types/node": "^24.10.0",
-    "oxlint": "^1.26.0",
-    "oxlint-tsgolint": "^0.5.1",
     "typescript": "5.9.2"
   }
 }

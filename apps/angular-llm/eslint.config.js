@@ -8,4 +8,7 @@ import { angularConfig } from '@repo/eslint-config/angular';
 export default defineConfig(angularConfig, {
   files: ['**/*.{js,ts}'],
   extends: [...oxlint.buildFromOxlintConfigFile('./.oxlintrc.json')],
+  rules: {
+    '@typescript-eslint/no-unused-vars': 'off', // See https://github.com/oxc-project/eslint-plugin-oxlint/issues/466
+  },
 });

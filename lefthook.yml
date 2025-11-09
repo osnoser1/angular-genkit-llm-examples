@@ -4,7 +4,7 @@ pre-commit:
     - name: Lint and format code
       glob: "*.{js,ts,html}"
       run: |
-        pnpm oxlint --type-aware --fix {staged_files}
+        pnpm oxlint --type-aware --fix --fix-suggestions {staged_files}
         pnpm prettier --write {staged_files}
 
     - name: Format rest of files

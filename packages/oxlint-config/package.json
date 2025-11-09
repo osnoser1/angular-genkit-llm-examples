@@ -1,0 +1,13 @@
+{
+  "name": "@repo/oxlint-config",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./oxlint-base.json": "./oxlint-base.json"
+  },
+  "devDependencies": {
+    "oxlint": "^1.26.0",
+    "oxlint-tsgolint": "^0.5.1"
+  }
+}

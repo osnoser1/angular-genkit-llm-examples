@@ -93,6 +93,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@repo/oxlint-config':
+        specifier: workspace:*
+        version: link:../../packages/oxlint-config
       '@types/express':
         specifier: ^5.0.1
         version: 5.0.5
@@ -108,12 +111,6 @@ importers:
       eslint-plugin-oxlint:
         specifier: ^1.26.0
         version: 1.26.0
-      oxlint:
-        specifier: ^1.26.0
-        version: 1.26.0(oxlint-tsgolint@0.5.1)
-      oxlint-tsgolint:
-        specifier: ^0.5.1
-        version: 0.5.1
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -142,6 +139,9 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12
     devDependencies:
+      '@repo/oxlint-config':
+        specifier: workspace:*
+        version: link:../../packages/oxlint-config
       '@types/cors':
         specifier: ^2.8.19
         version: 2.8.19
@@ -151,12 +151,6 @@ importers:
       '@types/node':
         specifier: ^24.10.0
         version: 24.10.0
-      oxlint:
-        specifier: ^1.26.0
-        version: 1.26.0(oxlint-tsgolint@0.5.1)
-      oxlint-tsgolint:
-        specifier: ^0.5.1
-        version: 0.5.1
       typescript:
         specifier: 5.9.2
         version: 5.9.2
@@ -273,6 +267,15 @@ importers:
       typescript-eslint:
         specifier: ^8.40.0
         version: 8.40.0(eslint@9.38.0(jiti@2.6.1))(typescript@5.9.2)
+
+  packages/oxlint-config:
+    devDependencies:
+      oxlint:
+        specifier: ^1.26.0
+        version: 1.26.0(oxlint-tsgolint@0.5.1)
+      oxlint-tsgolint:
+        specifier: ^0.5.1
+        version: 0.5.1
 
   packages/typescript-config: {}
 
