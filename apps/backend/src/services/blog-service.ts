@@ -164,7 +164,7 @@ export const analyzeBlogPostFlow = ai.defineFlow(
 export async function generateStructuredOutput(input: {
   topic: string;
   audience?: string;
-}): Promise<any> {
+}) {
   const { topic, audience } = input;
   const prompt = `Create a detailed blog post outline about "${topic}"${
     audience ? ` for ${audience}` : ''

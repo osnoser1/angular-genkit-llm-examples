@@ -353,9 +353,7 @@ export class GenkitKanbanComponent {
   }
 
   private updateColumnsFromSubtopics(
-    subtopics: Array<
-      Partial<{ id: string; title: string; description: string }>
-    >,
+    subtopics: Partial<{ id: string; title: string; description: string }>[],
   ): void {
     const columns: KanbanColumn[] = subtopics.map((sub) => ({
       subtopic: sub.title ?? '',
